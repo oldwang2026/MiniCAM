@@ -80,6 +80,46 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 
 }
 
+bool STLReader::loadASCIISTL(const std::string& filePath, std::vector<Triangle>& triangles)
+{
+	std::ifstream file(filePath);
+	if (!file.is_open()) return false;
+
+	std::string word;
+	Triangle tempT;
+	int vCount = 0;
+
+	// 使用 >> 操作符会自动跳过所有空格、制表符和换行符
+	while (file >> word)
+	{
+		if (word == "facet")
+		{
+			file >> word; // 跳过 "normal"
+			// 直接读入 double。虽然 STL 存的是 float，但读入 double 是安全的
+			file >> tempT.norm.x >> tempT.norm.y >> tempT.norm.z;
+		}
+		else if (word == "vertex")
+		{
+			Point3D p;
+			file >> p.x >> p.y >> p.z;
+
+			if (vCount == 0)      tempT.v1 = p;
+			else if (vCount == 1) tempT.v2 = p;
+			else if (vCount == 2) tempT.v3 = p;
+
+			vCount++;
+			if (vCount == 3)
+			{
+				triangles.push_back(tempT);
+				vCount = 0; // 重置计数
+			}
+		}
+	}
+
+	file.close();
+	std::cout << "Successfully loaded " << triangles.size() << " triangles from ASCII STL." << std::endl;
+	return true;
+}
 bool STLReader::readFile(const std::string& filename, std::vector<Triangle>& triangles)
 {
 	if (isASCIISTL(filename))
