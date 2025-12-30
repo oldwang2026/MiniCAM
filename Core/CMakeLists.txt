@@ -1,7 +1,5 @@
 ﻿# CMakeList.txt: MIniCamCore 的 CMake 项目，在此处包括源代码并定义
 # 项目特定的逻辑。
-#
-
 # 将源代码添加到此项目的可执行文件。
 # Core/CMakeLists.txt
 
@@ -12,7 +10,12 @@ project ("MiniCAM_Executable")
 include_directories("include")
 
 # 3. 收集源文件
-set(SOURCES "src/main.cpp")
+set(SOURCES 
+	"src/main.cpp"
+	"src/STLReader.cpp"     
+    "include/STLReader.h"   
+    "include/GeoTypes.h"    
+)
 
 # 4. 生成可执行文件
 # 注意：生成的 exe 会放在 out/build/.../Core/ 下面
