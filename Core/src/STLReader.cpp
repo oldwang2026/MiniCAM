@@ -1,12 +1,12 @@
 #include "STLReader.h"
-#include <fstream>;
+#include <fstream>
 #include <iostream>
 #include <filesystem>
 
 
 bool STLReader::isASCIISTL(const std::string& filePath)
 {
-	//¶ÁÇ°5¸ö×Ö½Ú
+	//è¯»å‰5ä¸ªå­—èŠ‚
 	std::ifstream file(filePath,std::ios::binary);
 
 	if (!file.is_open())
@@ -24,21 +24,21 @@ bool STLReader::isASCIISTL(const std::string& filePath)
 		return false;
 	}
 
-	// Size = 80×Ö½Ú(Í·) + 4×Ö½Ú(ÊıÁ¿) + N * 50×Ö½Ú(Ã¿¸öÈı½ÇĞÎ)
-	// A. »ñÈ¡ÎÄ¼ş×Ü´óĞ¡
-	file.seekg(0, std::ios::end); // ÒÆ¶¯µ½ÎÄ¼şÄ©Î²
-	std::streamsize fileSize = file.tellg(); // »ñÈ¡µ±Ç°Î»ÖÃ£¨¼´ÎÄ¼ş´óĞ¡£©
+	// Size = 80å­—èŠ‚(å¤´) + 4å­—èŠ‚(æ•°é‡) + N * 50å­—èŠ‚(æ¯ä¸ªä¸‰è§’å½¢)
+	// A. è·å–æ–‡ä»¶æ€»å¤§å°
+	file.seekg(0, std::ios::end); // ç§»åŠ¨åˆ°æ–‡ä»¶æœ«å°¾
+	std::streamsize fileSize = file.tellg(); // è·å–å½“å‰ä½ç½®ï¼ˆå³æ–‡ä»¶å¤§å°ï¼‰
 
 	if (fileSize < 84) {
-		return true; // ÎÄ¼şÌ«Ğ¡£¬²»·ûºÏ¶ş½øÖÆ×îĞ¡±ê×¼£¬µ±×÷ ASCII ÀïµÄ»µÎÄ¼ş´¦Àí»òÖ±½Ó·µ»Ø ASCII
+		return true; // æ–‡ä»¶å¤ªå°ï¼Œä¸ç¬¦åˆäºŒè¿›åˆ¶æœ€å°æ ‡å‡†ï¼Œå½“ä½œ ASCII é‡Œçš„åæ–‡ä»¶å¤„ç†æˆ–ç›´æ¥è¿”å› ASCII
 	}
 
-	// B. ¶ÁÈ¡Èı½ÇĞÎÊıÁ¿
-	file.seekg(80, std::ios::beg); // ÒÆ¶¯µ½´æ´¢Èı½ÇĞÎÊıÁ¿µÄÎ»ÖÃ
+	// B. è¯»å–ä¸‰è§’å½¢æ•°é‡
+	file.seekg(80, std::ios::beg); // ç§»åŠ¨åˆ°å­˜å‚¨ä¸‰è§’å½¢æ•°é‡çš„ä½ç½®
 	uint32_t triangleCount = 0;
 	file.read(reinterpret_cast<char*>(&triangleCount), sizeof(uint32_t));
 
-	// C. ¼ÆËãÔ¤ÆÚµÄ¶ş½øÖÆÎÄ¼ş´óĞ¡
+	// C. è®¡ç®—é¢„æœŸçš„äºŒè¿›åˆ¶æ–‡ä»¶å¤§å°
 	std::streamsize expectedsize = 80 + 4 + static_cast<std::streamsize>(triangleCount) * 50;
 
 	if (fileSize == expectedsize)
@@ -46,6 +46,7 @@ bool STLReader::isASCIISTL(const std::string& filePath)
 		return false;
 	}
 
+	return true;
 }
 
 bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>& triangles)
@@ -53,7 +54,7 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 	std::ifstream file(filePath, std::ios::binary);
 	if (!file.is_open()) return false;
 
-	file.seekg(80, std::ios::beg); //Ìø¹ıÍ·²¿ºÍÈı½ÇĞÎÊıÁ¿
+	file.seekg(80, std::ios::beg); //è·³è¿‡å¤´éƒ¨å’Œä¸‰è§’å½¢æ•°é‡
 
 	uint32_t triangleCount = 0;
 	file.read(reinterpret_cast<char*>(&triangleCount), sizeof(uint32_t));
@@ -62,7 +63,7 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 	for(uint32_t i = 0; i < triangleCount; ++i)
 	{
 		float buffer[12];
-		if (file.read(reinterpret_cast<char*>(buffer), 12 * sizeof(float));)
+		if (file.read(reinterpret_cast<char*>(buffer), 12 * sizeof(float)))
 		{
 			Triangle t;
 			t.norm = Vector3D(buffer[0], buffer[1], buffer[2]);
@@ -89,13 +90,13 @@ bool STLReader::loadASCIISTL(const std::string& filePath, std::vector<Triangle>&
 	Triangle tempT;
 	int vCount = 0;
 
-	// Ê¹ÓÃ >> ²Ù×÷·û»á×Ô¶¯Ìø¹ıËùÓĞ¿Õ¸ñ¡¢ÖÆ±í·ûºÍ»»ĞĞ·û
+	// ä½¿ç”¨ >> æ“ä½œç¬¦ä¼šè‡ªåŠ¨è·³è¿‡æ‰€æœ‰ç©ºæ ¼ã€åˆ¶è¡¨ç¬¦å’Œæ¢è¡Œç¬¦
 	while (file >> word)
 	{
 		if (word == "facet")
 		{
-			file >> word; // Ìø¹ı "normal"
-			// Ö±½Ó¶ÁÈë double¡£ËäÈ» STL ´æµÄÊÇ float£¬µ«¶ÁÈë double ÊÇ°²È«µÄ
+			file >> word; // è·³è¿‡ "normal"
+			// ç›´æ¥è¯»å…¥ doubleã€‚è™½ç„¶ STL å­˜çš„æ˜¯ floatï¼Œä½†è¯»å…¥ double æ˜¯å®‰å…¨çš„
 			file >> tempT.norm.x >> tempT.norm.y >> tempT.norm.z;
 		}
 		else if (word == "vertex")
@@ -111,7 +112,7 @@ bool STLReader::loadASCIISTL(const std::string& filePath, std::vector<Triangle>&
 			if (vCount == 3)
 			{
 				triangles.push_back(tempT);
-				vCount = 0; // ÖØÖÃ¼ÆÊı
+				vCount = 0; // é‡ç½®è®¡æ•°
 			}
 		}
 	}

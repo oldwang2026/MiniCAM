@@ -1,29 +1,31 @@
-﻿# CMakeList.txt: MIniCamCore 的 CMake 项目，在此处包括源代码并定义
-# 项目特定的逻辑。
-# 将源代码添加到此项目的可执行文件。
-# Core/CMakeLists.txt
+# CMakeLists.txt
 
-# 1. 定义这个子项目的名字 (生成的可执行文件就叫 MiniCAM.exe)
-project ("MiniCAM_Executable")
+# 1. 定义项目
+project("MiniCAM_Executable" VERSION 1.0)
 
-# 2. 告诉 CMake 头文件在哪里 (相对于当前 Core 文件夹)
-include_directories("include")
+# 2. 创建可执行文件目标 (先定义一个目标)
+add_executable(MiniCAM)
 
-# 3. 收集源文件
-set(SOURCES 
-	"src/main.cpp"
-	"src/STLReader.cpp"     
-    "include/STLReader.h"   
-    "include/GeoTypes.h"    
+# 3. 为目标添加源文件和头文件 (Modern CMake 推荐方式)
+# 使用 PRIVATE 表示这些文件仅用于构建 MiniCAM 自身
+target_sources(MiniCAM PRIVATE
+    "src/main.cpp"
+    "src/STLReader.cpp"
+    "include/STLReader.h"
+    "include/GeoTypes.h"
 )
 
-# 4. 生成可执行文件
-# 注意：生成的 exe 会放在 out/build/.../Core/ 下面
-add_executable (MiniCAM ${SOURCES})
+# 4. 指定头文件搜索路径
+# 使用 PRIVATE 确保路径只对 MiniCAM 目标有效
+# "include" 是存放 .h 文件的目录
+target_include_directories(MiniCAM PRIVATE "include")
 
-# TODO: 如有需要，请添加测试并安装目标。
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET MiniCAM PROPERTY CXX_STANDARD 20)
-endif()
+# 5. 设置 C++ 标准 (推荐方式)
+# 这样写 CMake 会自动处理版本要求，不需要写 if 判断
+target_compile_features(MiniCAM PRIVATE cxx_std_20)
 
-
+# 如果你希望在编译时强制要求支持 C++20，可以加上这两行：
+set_target_properties(MiniCAM PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+)
