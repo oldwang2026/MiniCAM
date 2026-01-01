@@ -1,25 +1,23 @@
-# CMakeLists.txt: 顶层 CMake 项目文件
+# CMakeLists.txt (Root)
 
-# 1. 最低版本
+# 1. 升级版本号以匹配子项目 (Modern CMake 3.25+)
 cmake_minimum_required (VERSION 3.25)
 
-# 2. MSVC 热重载支持 (保留你原有的配置，这对调试很有用)
+# 保持原本的 MSVC 调试配置优化 (热重载支持)
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
 endif()
 
-# 3. 定义解决方案名称
+# 定义整个解决方案的名字
 project ("MiniCAM_Solution")
 
-# 1. 【exe 和 dll】去 bin
-# Windows 运行程序时，去哪里找 exe，就去哪里找 dll。它俩必须在同一个屋檐下。
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# 全局设定 C++ 标准 (这样子项目默认都会继承，不用每个都写一遍)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 2. 【lib (静态库 + 导入库)】去 lib
-# 这些是给 Linker (链接器) 用的，运行时不需要。
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-
-# 4. 包含子项目
+# 包含子项目
+#  注意顺序：先 Core 后 App
+# 因为 App 依赖 Core，虽然 CMake 现代版本能自动处理依赖，但按逻辑顺序写是个好习惯
 add_subdirectory ("Core")
+add_subdirectory ("App")

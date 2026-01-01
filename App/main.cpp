@@ -1,9 +1,10 @@
-﻿// MIniCamCore.cpp: 定义应用程序的入口点。
+// MIniCamCore.cpp: 定义应用程序的入口点。
 //
 
 #include "GeoTypes.h"
 #include <vector>
 #include <iostream>
+#include "BoundingBox.h"
 
 int main()
 {
