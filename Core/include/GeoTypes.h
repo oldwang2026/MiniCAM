@@ -11,9 +11,33 @@ struct Point3D
 	Point3D() : x(0.0), y(0.0), z(0.0) {}
 	Point3D(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {}
 
+	Point3D& operator+=(const Point3D& other)
+	{
+		x += other.x;
+		y += other.y;
+		z += other.z;
+
+		return *this;
+	}
+
+	Point3D operator+(const Point3D& other) const
+	{
+		return Point3D(*this) += other;
+	}
+
+	Point3D operator/(const double other) const
+	{
+
+		Point3D temp = *this;
+		temp.x /= other;
+		temp.y /= other;
+		temp.z /= other;
+		return temp;
+	}
 };
 
 using Vector3D = Point3D;
+
 
 struct Triangle
 {

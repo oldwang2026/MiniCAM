@@ -1,4 +1,4 @@
-#include "STLReader.h"
+﻿#include "STLReader.h"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -121,6 +121,7 @@ bool STLReader::loadASCIISTL(const std::string& filePath, std::vector<Triangle>&
 	std::cout << "Successfully loaded " << triangles.size() << " triangles from ASCII STL." << std::endl;
 	return true;
 }
+
 bool STLReader::readFile(const std::string& filename, std::vector<Triangle>& triangles)
 {
 	if (isASCIISTL(filename))

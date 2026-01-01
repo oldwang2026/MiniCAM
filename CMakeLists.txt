@@ -1,4 +1,4 @@
-# CMakeLists.txt (Root)
+﻿# CMakeLists.txt (Root)
 
 # 1. 升级版本号以匹配子项目 (Modern CMake 3.25+)
 cmake_minimum_required (VERSION 3.25)
