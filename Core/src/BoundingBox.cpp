@@ -5,8 +5,8 @@ BoundingBox::BoundingBox()
 	constexpr double maxd = std::numeric_limits<double>::max();
 	constexpr double mind = std::numeric_limits<double>::lowest();
 
-	MinPoint = Point3D(mind, mind, mind);
-	MaxPoint = Point3D(maxd, maxd, maxd);
+	MinPoint = Point3D(maxd, maxd, maxd);
+	MaxPoint = Point3D(mind, mind, mind);
 
 }
 
@@ -51,9 +51,10 @@ void BoundingBox::Update(const Point3D coord)
 	MinPoint.x = std::min(coord.y, MinPoint.y);
 	MinPoint.x = std::min(coord.z, MinPoint.z);
 
-	MinPoint.x = std::max(coord.x, MinPoint.x);
-	MinPoint.x = std::max(coord.y, MinPoint.y);
-	MinPoint.x = std::max(coord.z, MinPoint.z);
+	// 更新最大值 (MaxPoint)
+	MaxPoint.x = std::max(MaxPoint.x, coord.x);
+	MaxPoint.y = std::max(MaxPoint.y, coord.y);
+	MaxPoint.z = std::max(MaxPoint.z, coord.z);
 }
 
 BoundingBox::~BoundingBox()

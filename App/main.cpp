@@ -5,26 +5,31 @@
 #include <vector>
 #include <iostream>
 #include "BoundingBox.h"
-
+#include "STLReader.h"
+#include <string>
+#include <filesystem>
 int main()
 {
-	std::cout << "MiniCAM Day 1" << std::endl;
-	std::cout << "size of Double " << sizeof(double) << "byte" << std::endl;
-	std::cout << "size of Double " << sizeof(Point3D) << "byte" << std::endl;
-	std::cout << "size of Double " << sizeof(Triangle) << "byte" << std::endl;
+	std::cout << "MiniCAM Day 3" << std::endl;
+
+	BoundingBox Bbox;
+	STLReader reader;
+
+	std::filesystem::path rootPath(PROJECT_ROOT_DIR);
+	std::filesystem::path fullPath = rootPath / "stl" / "batman.stl";
 
 	std::vector<Triangle> triangles;
-	triangles.reserve(3);
+	reader.readFile(fullPath.string(), triangles);
 
-	Triangle t1;
-	t1.norm = Vector3D(0.0, 0.0, 1.0);;
-	t1.v1 = Point3D(0, 0, 0);
-	t1.v2 = Point3D(1, 0, 0);
-	t1.v3 = Point3D(0, 1, 0);
+	for (auto& tri : triangles)
+	{
+		Bbox.Update(tri.v1);
+		Bbox.Update(tri.v2);
+		Bbox.Update(tri.v3);
+	}
 
-	triangles.push_back(t1);
-
-	std::cout << "Successfully created a mesh with " << triangles.size() << " triangle." << std::endl;
+	std::cout << "The num of triangles is " << triangles.size() << std::endl;
+	std::cout << "The boundingbox center point is " << Bbox.GetCenterPoint().x << "," << Bbox.GetCenterPoint().y << "," << Bbox.GetCenterPoint().z << std::endl;
 
 	return 0;
 }
