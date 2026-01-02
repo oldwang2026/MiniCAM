@@ -47,11 +47,12 @@ std::vector<double> BoundingBox::GetDistances()
 
 void BoundingBox::Update(const Point3D coord)
 {
+	// === 修复点 1: 确保赋值给对应的 .x, .y, .z ===
 	MinPoint.x = std::min(coord.x, MinPoint.x);
-	MinPoint.x = std::min(coord.y, MinPoint.y);
-	MinPoint.x = std::min(coord.z, MinPoint.z);
+	MinPoint.y = std::min(coord.y, MinPoint.y); // <--- 必须是 MinPoint.y
+	MinPoint.z = std::min(coord.z, MinPoint.z); // <--- 必须是 MinPoint.z
 
-	// 更新最大值 (MaxPoint)
+	// === 修复点 2: MaxPoint 也要对应 ===
 	MaxPoint.x = std::max(MaxPoint.x, coord.x);
 	MaxPoint.y = std::max(MaxPoint.y, coord.y);
 	MaxPoint.z = std::max(MaxPoint.z, coord.z);
