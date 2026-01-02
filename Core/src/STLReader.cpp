@@ -59,7 +59,7 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 	uint32_t triangleCount = 0;
 	file.read(reinterpret_cast<char*>(&triangleCount), sizeof(uint32_t));
 	triangles.reserve(triangleCount);
-
+	//源文件中一个tri 52
 	for(uint32_t i = 0; i < triangleCount; ++i)
 	{
 		float buffer[12];
@@ -72,7 +72,9 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 			t.v3 = Point3D(buffer[9], buffer[10], buffer[11]);
 			triangles.push_back(t);
 
+			
 		}
+		file.ignore(2);
 	}
 
 	file.close();

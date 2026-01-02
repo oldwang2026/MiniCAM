@@ -21,12 +21,7 @@ int main()
 	std::vector<Triangle> triangles;
 	reader.readFile(fullPath.string(), triangles);
 
-	for (auto& tri : triangles)
-	{
-		Bbox.Update(tri.v1);
-		Bbox.Update(tri.v2);
-		Bbox.Update(tri.v3);
-	}
+	Bbox.Update(triangles);
 
 	std::cout << "The num of triangles is " << triangles.size() << std::endl;
 	std::cout << "The boundingbox center point is " << Bbox.GetCenterPoint().x << "," << Bbox.GetCenterPoint().y << "," << Bbox.GetCenterPoint().z << std::endl;

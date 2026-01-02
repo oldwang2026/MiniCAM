@@ -58,6 +58,15 @@ void BoundingBox::Update(const Point3D coord)
 	MaxPoint.z = std::max(MaxPoint.z, coord.z);
 }
 
+void BoundingBox::Update(const std::vector<Triangle> triangles)
+{
+	for (auto& tri : triangles)
+	{
+		Update(tri.v1);
+		Update(tri.v2);
+		Update(tri.v3);
+	}
+}
 BoundingBox::~BoundingBox()
 {
 }
