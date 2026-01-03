@@ -54,31 +54,52 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 	std::ifstream file(filePath, std::ios::binary);
 	if (!file.is_open()) return false;
 
-	file.seekg(80, std::ios::beg); //跳过头部和三角形数量
+	file.seekg(80, std::ios::beg); 
 
 	uint32_t triangleCount = 0;
 	file.read(reinterpret_cast<char*>(&triangleCount), sizeof(uint32_t));
-	triangles.reserve(triangleCount);
-	//源文件中一个tri 52
-	for(uint32_t i = 0; i < triangleCount; ++i)
-	{
-		float buffer[12];
-		if (file.read(reinterpret_cast<char*>(buffer), 12 * sizeof(float)))
-		{
-			Triangle t;
-			t.norm = Vector3D(buffer[0], buffer[1], buffer[2]);
-			t.v1 = Point3D(buffer[3], buffer[4], buffer[5]);
-			t.v2 = Point3D(buffer[6], buffer[7], buffer[8]);
-			t.v3 = Point3D(buffer[9], buffer[10], buffer[11]);
-			triangles.push_back(t);
 
-			
-		}
-		file.ignore(2);
+	if (triangleCount == 0)
+	{
+		return true;
 	}
 
+	triangles.clear();
+	triangles.reserve(triangleCount);
+	
+	
+	const size_t SingleTrianglesize = 4 * 3 * sizeof(float) + 2;
+	size_t buffersize = SingleTrianglesize * static_cast<size_t>(triangleCount);
+
+	std::vector<uint8_t> buffer;
+	buffer.resize(buffersize);
+
+	if (!file.read(reinterpret_cast<char*>(buffer.data()), buffersize))
+	{
+		return false;
+	}
+
+	uint8_t* ptr = buffer.data();
+
+	for (uint32_t i = 0; i < triangleCount; i++)
+	{
+		float data[12];
+		memcpy(data, ptr, 12 * sizeof(float));
+
+		Triangle t;
+		t.norm = Vector3D(data[0], data[1], data[2]);
+		t.v1 = Point3D(data[3], data[4], data[5]);
+		t.v2 = Point3D(data[6], data[7], data[8]);
+		t.v3 = Point3D(data[9], data[10], data[11]);
+
+		triangles.push_back(t);
+
+		ptr += SingleTrianglesize;
+	}
+	
+
 	file.close();
-	std::cout << "successfully loaded" << triangles.size() << "triangles from binary STL file." << std::endl;
+	std::cout << "successfully loaded " << triangles.size() << " triangles from binary STL file." << std::endl;
 	return true;
 
 }

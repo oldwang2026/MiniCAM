@@ -12,6 +12,7 @@ target_sources(MiniCAM_Core
     PRIVATE
         "src/STLReader.cpp"
         "src/BoundingBox.cpp"
+        "src/Part.cpp"
 
 
     PUBLIC
@@ -21,8 +22,9 @@ target_sources(MiniCAM_Core
             "include/STLReader.h"
             "include/GeoTypes.h"
             "include/BoundingBox.h"
+            "include/Part.h"
             
-)
+ )
 
 # 3. 设置 C++ 标准
 target_compile_features(MiniCAM_Core PUBLIC cxx_std_20)
