@@ -26,7 +26,7 @@ public:
 
 	void Update(const Point3D coord);
 	
-	void Update(const std::vector<Triangle> triangles);
+	void Update(const std::vector<Triangle>& triangles);
 	//void UpdatebySTL(stlmodel) in future
 private:
 	Point3D MinPoint;
