@@ -79,6 +79,7 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 		return false;
 	}
 
+
 	uint8_t* ptr = buffer.data();
 
 	for (uint32_t i = 0; i < triangleCount; i++)
