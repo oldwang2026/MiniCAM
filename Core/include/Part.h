@@ -33,6 +33,7 @@ private:
 	std::vector<Point3D> m_uniquevertices;
 	std::string m_name;
 	BoundingBox m_bbox;
+	PolyMesh m_mesh;
 
 	void BuildTopology();
 
