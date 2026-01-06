@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-
+#include <string>
 
 bool STLReader::isASCIISTL(const std::string& filePath)
 {
@@ -88,10 +88,10 @@ bool STLReader::loadBinarySTL(const std::string& filePath, std::vector<Triangle>
 		memcpy(data, ptr, 12 * sizeof(float));
 
 		Triangle t;
-		t.norm = Vector3D(data[0], data[1], data[2]);
-		t.v1 = Point3D(data[3], data[4], data[5]);
-		t.v2 = Point3D(data[6], data[7], data[8]);
-		t.v3 = Point3D(data[9], data[10], data[11]);
+		t.norm = Vector3D{ data[0], data[1], data[2] };
+		t.v1 = Point3D{ data[3], data[4], data[5] };
+		t.v2 = Point3D{ data[6], data[7], data[8] };
+		t.v3 = Point3D{ data[9], data[10], data[11] };
 
 		triangles.push_back(t);
 
@@ -121,12 +121,12 @@ bool STLReader::loadASCIISTL(const std::string& filePath, std::vector<Triangle>&
 		{
 			file >> word; // 跳过 "normal"
 			// 直接读入 double。虽然 STL 存的是 float，但读入 double 是安全的
-			file >> tempT.norm.x >> tempT.norm.y >> tempT.norm.z;
+			file >> tempT.norm.x() >> tempT.norm.y() >> tempT.norm.z();
 		}
 		else if (word == "vertex")
 		{
 			Point3D p;
-			file >> p.x >> p.y >> p.z;
+			file >> p.x() >> p.y() >> p.z();
 
 			if (vCount == 0)      tempT.v1 = p;
 			else if (vCount == 1) tempT.v2 = p;

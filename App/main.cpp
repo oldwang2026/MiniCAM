@@ -27,9 +27,9 @@ int main()
 	Part STLPart(fullPath.string());
 
 	std::cout << "The num of triangles is " << STLPart.GetTriangleCount() << std::endl;
-	std::cout << "The boundingbox center point is " << STLPart.GetBoundingBox().GetCenterPoint().x << "," 
-													<< STLPart.GetBoundingBox().GetCenterPoint().y << "," 
-													<< STLPart.GetBoundingBox().GetCenterPoint().z << std::endl;
+	std::cout << "The boundingbox center point is " << STLPart.GetBoundingBox().GetCenterPoint().x() << "," 
+													<< STLPart.GetBoundingBox().GetCenterPoint().y() << ","
+													<< STLPart.GetBoundingBox().GetCenterPoint().z() << std::endl;
 	std::cout << "The num of unique vectices is " << STLPart.GetVertexCount();
 
 	return 0;

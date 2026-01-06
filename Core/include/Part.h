@@ -28,14 +28,20 @@ public:
 
 
 private:
+	void BuildTopology();
+
+
+private:
 	std::vector<Triangle> m_triangles;
 
-	std::vector<Point3D> m_uniquevertices;
 	std::string m_name;
 	BoundingBox m_bbox;
 	PolyMesh m_mesh;
 
-	void BuildTopology();
+	std::vector<Point3D> m_vertices;
+
+	std::vector<Eigen::Vector3i> m_faces; //i 为 index of vertices
+
 
 };
 

@@ -38,9 +38,9 @@ std::vector<double> BoundingBox::GetDistances()
 {
 	std::vector<double> distances;
 	distances.reserve(3);
-	distances.push_back(MaxPoint.x - MinPoint.x);
-	distances.push_back(MaxPoint.y - MinPoint.y);
-	distances.push_back(MaxPoint.z - MinPoint.z);
+	distances.push_back(MaxPoint.x() - MinPoint.x());
+	distances.push_back(MaxPoint.y() - MinPoint.y());
+	distances.push_back(MaxPoint.z() - MinPoint.z());
 
 	return distances;
 }
@@ -48,14 +48,14 @@ std::vector<double> BoundingBox::GetDistances()
 void BoundingBox::Update(const Point3D coord)
 {
 	// === 修复点 1: 确保赋值给对应的 .x, .y, .z ===
-	MinPoint.x = std::min(coord.x, MinPoint.x);
-	MinPoint.y = std::min(coord.y, MinPoint.y); // <--- 必须是 MinPoint.y
-	MinPoint.z = std::min(coord.z, MinPoint.z); // <--- 必须是 MinPoint.z
+	MinPoint.x() = std::min(coord.x(), MinPoint.x());
+	MinPoint.y() = std::min(coord.y(), MinPoint.y()); // <--- 必须是 MinPoint.y
+	MinPoint.z() = std::min(coord.z(), MinPoint.z()); // <--- 必须是 MinPoint.z
 
 	// === 修复点 2: MaxPoint 也要对应 ===
-	MaxPoint.x = std::max(MaxPoint.x, coord.x);
-	MaxPoint.y = std::max(MaxPoint.y, coord.y);
-	MaxPoint.z = std::max(MaxPoint.z, coord.z);
+	MaxPoint.x() = std::max(MaxPoint.x(), coord.x());
+	MaxPoint.y() = std::max(MaxPoint.y(), coord.y());
+	MaxPoint.z() = std::max(MaxPoint.z(), coord.z());
 }
 
 void BoundingBox::Update(const std::vector<Triangle>& triangles)

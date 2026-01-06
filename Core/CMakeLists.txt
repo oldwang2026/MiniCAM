@@ -4,6 +4,8 @@ cmake_minimum_required (VERSION 3.25) # 必须升级最低版本
 project ("MiniCAM_Core_Lib")
 
 # 1. 创建静态库
+
+find_package(Eigen3 CONFIG REQUIRED)
 add_library(MiniCAM_Core STATIC)
 
 # 2. 添加源文件 & 定义头文件集 (核心改动!)
@@ -30,3 +32,4 @@ target_sources(MiniCAM_Core
 target_compile_features(MiniCAM_Core PUBLIC cxx_std_20)
 
 target_include_directories(MiniCAM_Core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include") 
+target_link_libraries(MiniCAM_Core PUBLIC Eigen3::Eigen)
