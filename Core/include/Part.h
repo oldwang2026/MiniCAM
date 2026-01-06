@@ -28,20 +28,22 @@ public:
 
 
 private:
+	void BuildBasicTopology();
+
+	void BuildHalfedgeTopology();
+
 	void BuildTopology();
 
-
 private:
-	std::vector<Triangle> m_triangles;
+	
 
 	std::string m_name;
 	BoundingBox m_bbox;
-	PolyMesh m_mesh;
-
+	
+	std::vector<Triangle> m_triangles;
 	std::vector<Point3D> m_vertices;
-
 	std::vector<Eigen::Vector3i> m_faces; //i 为 index of vertices
 
-
+	PolyMesh m_mesh;
 };
 
