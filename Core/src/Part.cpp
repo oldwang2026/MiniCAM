@@ -182,10 +182,29 @@ std::vector<int> Part::GetOneRingNeighbors(int vert_idx) const
 
 	if (m_vertices.size() == 0) return neighbors;
 	
-	auto centralVertex = m_mesh.verts[vert_idx];
+	auto start_edge_index = m_mesh.verts.at(vert_idx).edge;
+
+	auto current_edge_index = start_edge_index;
 	
-	auto start_edge = m_mesh.edges[centralVertex.edge];
-	
-	
+	bool hit_boundary{ false };
+
+	do
+	{
+		neighbors.push_back(m_mesh.edges.at(current_edge_index).vert);
+
+		auto pairedge_index = m_mesh.edges.at(current_edge_index).pair;
+
+		if (pairedge_index == -1)//no pair edge  == boundary edge
+		{
+			hit_boundary = true;
+			break;
+		}
+
+		//pairedge->next 的终点为 下一个OneRingNeighbor 范围内的点 
+		current_edge_index = m_mesh.edges.at(pairedge_index).next;
+
+	} while (current_edge_index != start_edge_index);
+
+
 	return neighbors;;
 }
