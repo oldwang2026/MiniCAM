@@ -175,3 +175,17 @@ void Part::BuildTopology()
 	BuildBasicTopology();
 	BuildHalfedgeTopology();
 }
+
+std::vector<int> Part::GetOneRingNeighbors(int vert_idx) const
+{
+	std::vector<int> neighbors;
+
+	if (m_vertices.size() == 0) return neighbors;
+	
+	auto centralVertex = m_mesh.verts[vert_idx];
+	
+	auto start_edge = m_mesh.edges[centralVertex.edge];
+	
+	
+	return neighbors;;
+}

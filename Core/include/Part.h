@@ -34,6 +34,9 @@ private:
 
 	void BuildTopology();
 
+	// Find Given Vertex's One-Ring Neighbors
+	std::vector<int> GetOneRingNeighbors(int vert_idx) const;
+
 private:
 	
 
