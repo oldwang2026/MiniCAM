@@ -179,32 +179,52 @@ void Part::BuildTopology()
 std::vector<int> Part::GetOneRingNeighbors(int vert_idx) const
 {
 	std::vector<int> neighbors;
-
-	if (m_vertices.size() == 0) return neighbors;
-	
-	auto start_edge_index = m_mesh.verts.at(vert_idx).edge;
-
-	auto current_edge_index = start_edge_index;
-	
-	bool hit_boundary{ false };
-
-	do
+	//考虑边界边情况 先逆时针旋转 再逆时针旋转
+	//逆时针旋转方式 当前边
+	auto cwStartEdgeIndex = m_mesh.verts[vert_idx].edge;
+	if (cwStartEdgeIndex == -1)
 	{
-		neighbors.push_back(m_mesh.edges.at(current_edge_index).vert);
+		return neighbors;
+	}
 
-		auto pairedge_index = m_mesh.edges.at(current_edge_index).pair;
+	auto currEdgeindex = cwStartEdgeIndex;
+	while (true)
+	{
+		//逆时针旋转得到的边
 
-		if (pairedge_index == -1)//no pair edge  == boundary edge
+		auto ccwEdge_index1 = m_mesh.edges[currEdgeindex].next;
+		auto ccwEdge_index2 = m_mesh.edges[ccwEdge_index1].next;
+
+		auto ccwEdge_pair = m_mesh.edges[ccwEdge_index2].pair;
+		if (ccwEdge_pair == -1)//对向无边 为边界 记录当前边为起点
 		{
-			hit_boundary = true;
+
+			neighbors.push_back(m_mesh.edges[ccwEdge_index1].vert);
+			cwStartEdgeIndex = currEdgeindex;
 			break;
 		}
 
-		//pairedge->next 的终点为 下一个OneRingNeighbor 范围内的点 
-		current_edge_index = m_mesh.edges.at(pairedge_index).next;
+		else if (ccwEdge_pair == cwStartEdgeIndex)//转完完整一环领域
+		{
+			cwStartEdgeIndex = ccwEdge_pair;
+			break;
+		}
+		currEdgeindex = ccwEdge_pair;
 
-	} while (current_edge_index != start_edge_index);
+	}
+	//顺时针搜索一环领域
+	auto cwCurrentEdge = cwStartEdgeIndex;
+	do
+	{
+		neighbors.push_back(m_mesh.edges[cwCurrentEdge].vert);
 
+		auto pairindex = m_mesh.edges[cwCurrentEdge].pair;
+		if (pairindex == -1)
+		{
+			break;
+		}
+		cwCurrentEdge = m_mesh.edges[pairindex].next;
+	} while (cwCurrentEdge != cwStartEdgeIndex);
 
 	return neighbors;;
 }
