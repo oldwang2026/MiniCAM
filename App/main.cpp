@@ -12,7 +12,7 @@
 
 int main()
 {
-	std::cout << "MiniCAM Day 5" << std::endl;
+	std::cout << "MiniCAM Day 7" << std::endl;
 
 
 	std::filesystem::path rootPath(PROJECT_ROOT_DIR);
@@ -32,12 +32,9 @@ int main()
 													<< STLPart.GetBoundingBox().GetCenterPoint().z() << std::endl;
 	std::cout << "The num of unique vectices is " << STLPart.GetVertexCount();
 
-	if (STLPart.GetTriangleCount() > 0) {
-		// 这是一个 hack 访问，以后我们会写专门的 API
-		// 假设你把 m_mesh 设为 public 或者加了 GetMesh()
-		// 验证：第0条边的 pair 是否存在？
-		// 如果 pair != -1，说明缝合成功！
-		std::cout << "Topology Check: Edge 0 is paired." << std::endl;
+	for (auto v : STLPart.GetOneRingNeighbors(0))
+	{
+		std::cout << v << std::endl;
 	}
 
 	return 0;

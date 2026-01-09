@@ -26,6 +26,7 @@ public:
 	
 	const size_t GetVertexCount() const;
 
+	std::vector<int> GetOneRingNeighbors(int vert_idx) const;
 
 private:
 	void BuildBasicTopology();
@@ -35,7 +36,7 @@ private:
 	void BuildTopology();
 
 	// Find Given Vertex's One-Ring Neighbors
-	std::vector<int> GetOneRingNeighbors(int vert_idx) const;
+	//std::vector<int> GetOneRingNeighbors(int vert_idx) const;
 
 private:
 	
