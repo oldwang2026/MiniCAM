@@ -116,9 +116,26 @@ void Part::BuildHalfedgeTopology()
 	{
 		const auto& face_indices = m_faces[i];
 
+
+		const auto& p0 = m_vertices[face_indices[0]];
+		const auto& p1 = m_vertices[face_indices[1]];
+		const auto& p2 = m_vertices[face_indices[2]];
+
+		const auto& v1 = p1 - p0;
+		const auto& v2 = p2 - p0;
+		Vector3D n = v1.cross(v2);
+		// 安全归一化：防止退化三角形导致除以零
+		if (n.norm() > MiniCAM::Tolerance) {
+			n.normalize();
+		}
+		else {
+			n = Vector3D{ 0, 0, 1 }; // 默认值，防止 NaN
+		}
+
 		//chuang jian mian 
 		HE_Face f;
 		f.edge = 3 * i;
+		f.facenorm = n; // 赋值计算好的法向
 		m_mesh.faces.push_back(f);
 
 		//chuang jian 3 tiao bian 
@@ -167,6 +184,28 @@ void Part::BuildHalfedgeTopology()
 
 		}
 	}
+
+	int boundary_edge_count = 0;
+
+	for (const auto& edge : m_mesh.edges)
+	{
+		if (edge.pair == -1)
+		{
+			boundary_edge_count++;
+
+			// 1. 标记终点
+			m_mesh.verts[edge.vert].is_boundary = true;
+
+			// 2. 标记起点 (依然需要通过 m_mesh 间接访问)
+			// 注意：这里需要捕获 this 或者是 m_mesh 才能访问其他边
+			int next_edge = edge.next;
+			int next_next_edge = m_mesh.edges[next_edge].next;
+			int v_source = m_mesh.edges[next_next_edge].vert;
+
+			m_mesh.verts[v_source].is_boundary = true;
+		}
+	}
+
 	std::cout << "Half-Edge Built: " << m_mesh.edges.size() << " edges." << std::endl;
 }
 
