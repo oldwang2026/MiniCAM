@@ -31,8 +31,6 @@ CMakeFiles/
 # MiniCAM Project Specific (CAM Domain)
 # ==============================================================================
 # 1. Ignore large 3D model files (Don't commit 500MB scans!)
-*.stl
-*.STL
 *.ply
 *.obj
 *.step

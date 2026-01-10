@@ -12,13 +12,22 @@
 
 ---
 
-## 🛠️ 军火库：环境与工具
-* **操作系统：** **Windows 10/11** (唯一主力平台)
-* **开发 IDE：** **Visual Studio 2022 Community**
-* **构建系统：** **CMake 3.25+** (核心工程技能)
-* **语言标准：** **C++ 20** (Modules, Concepts, Spans)
-* **核心数学库：** **Eigen 3.4+**
-* **辅助工具：** **NX** (可视化验证), **MeshLab**, Git
+## 🎯 当前冲刺任务 (Current Sprint): TwistCube 五轴验证
+**场景设定：** 针对“一次装夹”的五轴零件进行算法原型验证。使用 NX 导出的高质量 STL 模型。
+
+### 1. 模型定义 (Geometry)
+* **零件名称：** TwistCube (扭转立方体)
+* **来源：** NX 建模导出 (Binary STL, Tolerance 0.001mm)
+* **总尺寸：** 底部 100x100mm，总高 90mm
+    * **底座 (Base)：** 100x100x20mm (无旋转)
+    * **上部 (Twist Body)：** 70x70x70mm (Z=20~90mm, 线性扭转 30°)
+
+### 2. 算法验证目标
+* **Phase 1 (粗加工):** 验证 **Z-Level Slicing** (切片算法)。
+    * *Input:* NX STL Model + Z Height.
+    * *Output:* 封闭的 2D 多边形轮廓 (Polygons).
+* **Phase 2 (精加工):** 验证 **5-Axis Swarf** (侧刃铣削)。
+    * *Goal:* 提取直纹面母线，生成刀轴矢量。
 
 ---
 
@@ -28,10 +37,10 @@
 
 | 周次 | 📚 Track A: 数据结构理论 (30min) | 🛠️ Track B: MiniCAM 实战 (90min) | ✅ 验收标准 |
 | :--- | :--- | :--- | :--- |
-| **Week 1** | **内存模型与哈希**<br>- Stack vs Heap (缓存命中率)<br>- Hash 函数原理与冲突解决<br>- 浮点数误差 (Epsilon) 处理 | **基础设施与 Part 类**<br>- **CMake**：搭建 MSVC + Eigen 环境<br>- **Part 类**：封装 `Mesh` 与 `BoundingBox`，作为业务主体<br>- **极速 IO**：利用 `buffer` 一次性读取 STL<br>- **去重**：实现 `Point3D` Hash 进行顶点焊接 | 1. 读取 50MB STL < 0.5秒<br>2. 正方体去重后仅剩 8 个顶点 |
-| **Week 2** | **图论基础 (Graph)**<br>- 邻接表 vs 邻接矩阵<br>- 半边结构指针设计 | **手写半边结构 (Half-Edge)**<br>- **(硬骨头)** 实现 `Vertex`, `Edge`, `Face` 指针互指<br>- **拓扑导航**：实现 `next_halfedge` 漫游<br>- **紧凑存储**：使用 `std::vector` + 索引 替代纯指针 | 能够 $O(1)$ 时间遍历任意顶点的“一环邻域” (One-Ring Neighborhood)。 |
-| **Week 3** | **离散微分几何基础**<br>- 向量叉乘/点乘的几何意义<br>- 重心坐标 | **混合法向 (Normal)**<br>- 实现按“角度权重”计算顶点法向<br>- 几何属性：计算面积、形心、边界识别 | 导出带有高质量法向的 OBJ，在 MeshLab 中观察表面光照平滑无接缝。 |
-| **Week 4** | **树 (Tree) 的概念**<br>- 递归思维 (Recursion)<br>- 树的深度与遍历 | **曲率计算与特征提取**<br>- **曲率估算**：计算离散平均曲率 (Mean Curvature)<br>- **特征识别**：基于曲率阈值，提取模型棱线 | 自动识别出牙齿模型的咬合面边缘线，并以红色显示。 |
+| **Week 1**<br>*(已完成)* | **内存模型与哈希**<br>- Stack vs Heap (缓存命中率)<br>- Hash 函数原理与冲突解决<br>- 浮点数误差 (Epsilon) 处理 | **基础设施与 Part 类**<br>- **CMake**：搭建 MSVC + Eigen 环境<br>- **Part 类**：封装 `Mesh` 与 `BoundingBox`<br>- **去重**：实现 `Point3D` Hash 顶点焊接 | 1. 读取 50MB STL < 0.5秒<br>2. 正方体去重后仅剩 8 个顶点 |
+| **Week 2**<br>*(进行中)* | **计算几何基础 (Geometry)**<br>- **求交理论**：平面方程与线面求交 (Ray-Plane Intersection)<br>- **鲁棒性**：处理数值误差导致的“裂缝”<br>- **多边形**：顺/逆时针判断 (Shoelace Formula) | **切片算法与可视化 (Slicer)**<br>- **导入验证**：验证 NX 导出模型的拓扑完整性<br>- **Slicer 类**：实现平面与三角形求交，输出 `Segment` 集合<br>- **拓扑重构**：将线段链表 (Linked List) 重组为封闭环 (Loop)<br>- **可视化**：编写 Python/SVG 脚本绘制切片层 | 1. 在 Z=50mm 处成功切出 TwistCube 轮廓<br>2. Python 脚本能画出该轮廓，且无断点 |
+| **Week 3** | **图论基础 (Graph)**<br>- 邻接表 vs 邻接矩阵<br>- 连通分量 (Connected Components) | **半边结构进阶与曲面分析**<br>- **法向计算**：基于半边结构计算“角度加权”顶点法向<br>- **邻域搜索**：完善 `OneRing` 遍历，为 Swarf 算法做准备<br>- **曲率估算**：识别模型棱线 (Feature Edges) | 导出带有高质量法向的 OBJ，在 MeshLab 中观察表面光照平滑无接缝。 |
+| **Week 4** | **树 (Tree) 的概念**<br>- 空间分割 (Spatial Partitioning)<br>- 递归思维 | **Swarf 刀轴计算**<br>- **直纹面提取**：识别侧壁的“母线”方向<br>- **刀轴生成**：生成沿母线方向的 (i,j,k) 矢量<br>- **G代码预览**：输出简单的 5轴 轨迹点 | 仿真软件中，刀具侧刃完美贴合 TwistCube 扭转面。 |
 
 ---
 
@@ -85,12 +94,14 @@
 
 ---
 
-## 📝 2. 当前进度追踪 (Current Status Tracker)
+## 📝 3. 当前进度追踪 (Current Status Tracker)
 *(请在每次对话开始时更新此部分，以便导师了解你的最新状态)*
 
-**📅 当前时间：** Month [ 1 ] - Week [ 1 ] - Day [7]
-**🚩 本周核心任务：** [ 与我讨论 ]
+**📅 当前时间：** Month [ 1 ] - Week [ 2 ] - Day [ 1 ]
+**🚩 本周核心任务：** 实现 Slicer (切片) 与 可视化 (Visualization)
 
 **✅ 已完成项 (Done)：**
-* [x] 查看我的GitHub链接
-
+* [x] Week 1: STL 读取与去重 (Vertex Welding)
+* [x] Week 1: BoundingBox 计算
+* [x] Week 1: 半边结构构建 (Half-Edge Build & Traversal)
+* [x] Week 1: 确定测试模型 (TwistCube - NX Export)
